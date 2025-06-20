@@ -12,32 +12,29 @@ let testcases = [
  * @param {*} regex:string - Given regex with above rules.
  * @param {*} text:string - Given text to search. 
  */
-function match(regex, text) {
+function match(regex, text, regexIdx, textIdx) {
 
-    if (regex[0] === '^') {
-        return matchInitial(regex.substring(1), text)
+    if (regex[regexIdx] === '^') {
+        return matchInitial(regex, text, regexIdx + 1, textIdx)
     }
+    do {
 
-    let flag = true
-    while (flag == true || text != "") {
-        if (matchInitial(regex, text)) {
+        if (matchInitial(regex, text, regexIdx, textIdx)) {
             return true;
         }
-        flag = false
-        if(text.length == 1) flag=true
-        text = text.substring(1)
-    }
+    } while (textIdx++ < text.length)
+
     return false;
 
 }
 
-function matchInitial(regex, text) {
-    if (regex.length === 0) {
+function matchInitial(regex, text, regexIdx, textIdx) {
+    if (regex.length === regexIdx) {
         return true
     }
 
-    if (regex[1] === '*') {
-        return matchStar(regex[0], regex.substring(2), text);
+    if (regex[regexIdx+1] === '*') {
+        return matchStar(regex[regexIdx], regex, text, regexIdx+2, textIdx);
     }
 
     if (regex[0] === '$' && regex.length === 1) {
